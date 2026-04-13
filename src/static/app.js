@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showMessage(text, type) {
     messageDiv.textContent = text;
-    messageDiv.className = type;
+    messageDiv.classList.remove("success", "error");
+    messageDiv.classList.add(type);
     messageDiv.classList.remove("hidden");
 
     window.clearTimeout(showMessage.timeoutId);
