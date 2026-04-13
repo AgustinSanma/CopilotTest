@@ -61,3 +61,50 @@ def test_signup_rejects_activity_at_capacity(client, activity_name):
     # Assert
     assert response.status_code == 400
     assert response.json() == {"detail": "Activity is full"}
+
+
+def test_signup_normalizes_email_case(client):
+    # Arrange
+    activity_name = "Chess Club"
+    email_mixed = "New.Student@Mergington.EDU"
+    email_normalized = "new.student@mergington.edu"
+
+    # Act
+    response = client.post(f"/activities/{activity_name}/signup", params={"email": email_mixed})
+
+    # Assert
+    assert response.status_code == 200
+    assert email_normalized in activities[activity_name]["participants"]
+
+
+def test_signup_normalizes_email_whitespace(client):
+    # Arrange
+    activity_name = "Chess Club"
+    email_with_spaces = "  new.student@mergington.edu  "
+    email_normalized = "new.student@mergington.edu"
+
+    # Act
+    response = client.post(f"/activities/{activity_name}/signup", params={"email": email_with_spaces})
+
+    # Assert
+    assert response.status_code == 200
+    assert email_normalized in activities[activity_name]["participants"]
+
+
+@pytest.mark.parametrize("invalid_email", [
+    "not-an-email",
+    "missing@",
+    "@nodomain.com",
+    "double..dot@example.com",
+    "user@.example.com",
+    "",
+])
+def test_signup_rejects_invalid_email(client, invalid_email):
+    # Arrange
+    activity_name = "Chess Club"
+
+    # Act
+    response = client.post(f"/activities/{activity_name}/signup", params={"email": invalid_email})
+
+    # Assert
+    assert response.status_code == 400

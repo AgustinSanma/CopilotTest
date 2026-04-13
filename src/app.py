@@ -13,7 +13,18 @@ from fastapi.staticfiles import StaticFiles
 import os
 from pathlib import Path
 
-EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$")
+EMAIL_REGEX = re.compile(
+    r"^[a-zA-Z0-9_%+\-]+(\.[a-zA-Z0-9_%+\-]+)*"
+    r"@[a-zA-Z0-9\-]+(\.[a-zA-Z0-9\-]+)*\.[a-zA-Z]{2,}$"
+)
+
+
+def validate_and_normalize_email(email: str) -> str:
+    """Strip whitespace, lowercase, and validate email format."""
+    email = email.strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Invalid email address")
+    return email
 
 app = FastAPI(title="Mergington High School API",
               description="API for viewing and signing up for extracurricular activities")
@@ -96,9 +107,7 @@ def get_activities():
 def signup_for_activity(activity_name: str, email: str = Query(...)):
     """Sign up a student for an activity"""
     # Normalize and validate email
-    email = email.strip().lower()
-    if not EMAIL_REGEX.match(email):
-        raise HTTPException(status_code=400, detail="Invalid email address")
+    email = validate_and_normalize_email(email)
 
     # Validate activity exists
     if activity_name not in activities:
@@ -123,9 +132,7 @@ def signup_for_activity(activity_name: str, email: str = Query(...)):
 def unregister_from_activity(activity_name: str, email: str = Query(...)):
     """Remove a student from an activity"""
     # Normalize and validate email
-    email = email.strip().lower()
-    if not EMAIL_REGEX.match(email):
-        raise HTTPException(status_code=400, detail="Invalid email address")
+    email = validate_and_normalize_email(email)
 
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
