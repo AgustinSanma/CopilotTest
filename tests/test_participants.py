@@ -1,4 +1,5 @@
 import pytest
+from urllib.parse import quote
 
 from src.app import activities
 
@@ -9,7 +10,7 @@ def test_unregister_removes_existing_participant(client):
     email = "michael@mergington.edu"
 
     # Act
-    response = client.delete(f"/activities/{activity_name}/participants", params={"email": email})
+    response = client.delete(f"/activities/{quote(activity_name, safe='')}/participants", params={"email": email})
     payload = response.json()
 
     # Assert
@@ -24,7 +25,7 @@ def test_unregister_rejects_unknown_activity(client):
     email = "student@mergington.edu"
 
     # Act
-    response = client.delete(f"/activities/{activity_name}/participants", params={"email": email})
+    response = client.delete(f"/activities/{quote(activity_name, safe='')}/participants", params={"email": email})
     payload = response.json()
 
     # Assert
@@ -38,7 +39,7 @@ def test_unregister_rejects_participant_not_registered(client):
     email = "student@mergington.edu"
 
     # Act
-    response = client.delete(f"/activities/{activity_name}/participants", params={"email": email})
+    response = client.delete(f"/activities/{quote(activity_name, safe='')}/participants", params={"email": email})
     payload = response.json()
 
     # Assert
@@ -52,7 +53,7 @@ def test_unregister_normalizes_email_case(client):
     email_mixed = "Michael@Mergington.EDU"
 
     # Act
-    response = client.delete(f"/activities/{activity_name}/participants", params={"email": email_mixed})
+    response = client.delete(f"/activities/{quote(activity_name, safe='')}/participants", params={"email": email_mixed})
 
     # Assert
     assert response.status_code == 200
@@ -65,7 +66,7 @@ def test_unregister_normalizes_email_whitespace(client):
     email_with_spaces = "  michael@mergington.edu  "
 
     # Act
-    response = client.delete(f"/activities/{activity_name}/participants", params={"email": email_with_spaces})
+    response = client.delete(f"/activities/{quote(activity_name, safe='')}/participants", params={"email": email_with_spaces})
 
     # Assert
     assert response.status_code == 200
@@ -85,7 +86,7 @@ def test_unregister_rejects_invalid_email(client, invalid_email):
     activity_name = "Chess Club"
 
     # Act
-    response = client.delete(f"/activities/{activity_name}/participants", params={"email": invalid_email})
+    response = client.delete(f"/activities/{quote(activity_name, safe='')}/participants", params={"email": invalid_email})
 
     # Assert
     assert response.status_code == 400

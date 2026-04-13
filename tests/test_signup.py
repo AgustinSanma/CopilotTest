@@ -1,4 +1,5 @@
 import pytest
+from urllib.parse import quote
 
 from src.app import activities
 
@@ -9,7 +10,7 @@ def test_signup_adds_new_participant(client):
     email = "new.student@mergington.edu"
 
     # Act
-    response = client.post(f"/activities/{activity_name}/signup", params={"email": email})
+    response = client.post(f"/activities/{quote(activity_name, safe='')}/signup", params={"email": email})
     payload = response.json()
 
     # Assert
@@ -24,7 +25,7 @@ def test_signup_rejects_unknown_activity(client):
     email = "new.student@mergington.edu"
 
     # Act
-    response = client.post(f"/activities/{activity_name}/signup", params={"email": email})
+    response = client.post(f"/activities/{quote(activity_name, safe='')}/signup", params={"email": email})
     payload = response.json()
 
     # Assert
@@ -38,7 +39,7 @@ def test_signup_rejects_duplicate_participant(client):
     email = "michael@mergington.edu"
 
     # Act
-    response = client.post(f"/activities/{activity_name}/signup", params={"email": email})
+    response = client.post(f"/activities/{quote(activity_name, safe='')}/signup", params={"email": email})
     payload = response.json()
 
     # Assert
@@ -56,7 +57,7 @@ def test_signup_rejects_activity_at_capacity(client, activity_name):
     email = "overflow.student@mergington.edu"
 
     # Act
-    response = client.post(f"/activities/{activity_name}/signup", params={"email": email})
+    response = client.post(f"/activities/{quote(activity_name, safe='')}/signup", params={"email": email})
 
     # Assert
     assert response.status_code == 400
@@ -70,7 +71,7 @@ def test_signup_normalizes_email_case(client):
     email_normalized = "new.student@mergington.edu"
 
     # Act
-    response = client.post(f"/activities/{activity_name}/signup", params={"email": email_mixed})
+    response = client.post(f"/activities/{quote(activity_name, safe='')}/signup", params={"email": email_mixed})
 
     # Assert
     assert response.status_code == 200
@@ -84,7 +85,7 @@ def test_signup_normalizes_email_whitespace(client):
     email_normalized = "new.student@mergington.edu"
 
     # Act
-    response = client.post(f"/activities/{activity_name}/signup", params={"email": email_with_spaces})
+    response = client.post(f"/activities/{quote(activity_name, safe='')}/signup", params={"email": email_with_spaces})
 
     # Assert
     assert response.status_code == 200
@@ -104,7 +105,7 @@ def test_signup_rejects_invalid_email(client, invalid_email):
     activity_name = "Chess Club"
 
     # Act
-    response = client.post(f"/activities/{activity_name}/signup", params={"email": invalid_email})
+    response = client.post(f"/activities/{quote(activity_name, safe='')}/signup", params={"email": invalid_email})
 
     # Assert
     assert response.status_code == 400

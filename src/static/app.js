@@ -17,6 +17,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 5000);
   }
 
+  function createParticipantItem(participant, activityName) {
+    const li = document.createElement("li");
+    li.className = "participant-row";
+
+    const span = document.createElement("span");
+    span.className = "participant-email";
+    span.textContent = participant;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "participant-delete-button";
+    button.dataset.activity = activityName;
+    button.dataset.email = participant;
+    button.setAttribute("aria-label", `Remove ${participant} from ${activityName}`);
+    button.title = "Remove participant";
+
+    const icon = document.createElement("span");
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "\u00d7";
+
+    button.appendChild(icon);
+    li.appendChild(span);
+    li.appendChild(button);
+    return li;
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -33,48 +59,65 @@ document.addEventListener("DOMContentLoaded", () => {
         activityCard.className = "activity-card";
 
         const spotsLeft = details.max_participants - details.participants.length;
-        const participantsMarkup = details.participants.length
-          ? `
-            <ul class="participants-list">
-              ${details.participants
-                .map(
-                  (participant) => `
-                    <li class="participant-row">
-                      <span class="participant-email">${participant}</span>
-                      <button
-                        type="button"
-                        class="participant-delete-button"
-                        data-activity="${name}"
-                        data-email="${participant}"
-                        aria-label="Remove ${participant} from ${name}"
-                        title="Remove participant"
-                      >
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </li>
-                  `
-                )
-                .join("")}
-            </ul>
-          `
-          : '<p class="participants-empty">No students signed up yet.</p>';
 
-        activityCard.innerHTML = `
-          <div class="activity-card-header">
-            <h4>${name}</h4>
-            <span class="spots-badge">${spotsLeft} spots left</span>
-          </div>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <div class="participants-section">
-            <div class="participants-heading">
-              <strong>Participants</strong>
-              <span class="participants-count">${details.participants.length}</span>
-            </div>
-            ${participantsMarkup}
-          </div>
-        `;
+        // Build card structure using DOM APIs to avoid XSS
+        const header = document.createElement("div");
+        header.className = "activity-card-header";
 
+        const h4 = document.createElement("h4");
+        h4.textContent = name;
+
+        const badge = document.createElement("span");
+        badge.className = "spots-badge";
+        badge.textContent = `${spotsLeft} spots left`;
+
+        header.appendChild(h4);
+        header.appendChild(badge);
+
+        const descP = document.createElement("p");
+        descP.textContent = details.description;
+
+        const scheduleP = document.createElement("p");
+        const scheduleStrong = document.createElement("strong");
+        scheduleStrong.textContent = "Schedule: ";
+        scheduleP.appendChild(scheduleStrong);
+        scheduleP.appendChild(document.createTextNode(details.schedule));
+
+        const participantsSection = document.createElement("div");
+        participantsSection.className = "participants-section";
+
+        const participantsHeading = document.createElement("div");
+        participantsHeading.className = "participants-heading";
+
+        const headingStrong = document.createElement("strong");
+        headingStrong.textContent = "Participants";
+
+        const countBadge = document.createElement("span");
+        countBadge.className = "participants-count";
+        countBadge.textContent = details.participants.length;
+
+        participantsHeading.appendChild(headingStrong);
+        participantsHeading.appendChild(countBadge);
+        participantsSection.appendChild(participantsHeading);
+
+        if (details.participants.length > 0) {
+          const ul = document.createElement("ul");
+          ul.className = "participants-list";
+          details.participants.forEach((participant) => {
+            ul.appendChild(createParticipantItem(participant, name));
+          });
+          participantsSection.appendChild(ul);
+        } else {
+          const emptyP = document.createElement("p");
+          emptyP.className = "participants-empty";
+          emptyP.textContent = "No students signed up yet.";
+          participantsSection.appendChild(emptyP);
+        }
+
+        activityCard.appendChild(header);
+        activityCard.appendChild(descP);
+        activityCard.appendChild(scheduleP);
+        activityCard.appendChild(participantsSection);
         activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
