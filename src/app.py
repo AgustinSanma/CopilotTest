@@ -5,11 +5,15 @@ A super simple FastAPI application that allows students to view and sign up
 for extracurricular activities at Mergington High School.
 """
 
-from fastapi import FastAPI, HTTPException
+import re
+
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import os
 from pathlib import Path
+
+EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$")
 
 app = FastAPI(title="Mergington High School API",
               description="API for viewing and signing up for extracurricular activities")
@@ -89,8 +93,13 @@ def get_activities():
 
 
 @app.post("/activities/{activity_name}/signup")
-def signup_for_activity(activity_name: str, email: str):
+def signup_for_activity(activity_name: str, email: str = Query(...)):
     """Sign up a student for an activity"""
+    # Normalize and validate email
+    email = email.strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Invalid email address")
+
     # Validate activity exists
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
@@ -111,8 +120,13 @@ def signup_for_activity(activity_name: str, email: str):
 
 
 @app.delete("/activities/{activity_name}/participants")
-def unregister_from_activity(activity_name: str, email: str):
+def unregister_from_activity(activity_name: str, email: str = Query(...)):
     """Remove a student from an activity"""
+    # Normalize and validate email
+    email = email.strip().lower()
+    if not EMAIL_REGEX.match(email):
+        raise HTTPException(status_code=400, detail="Invalid email address")
+
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
 
