@@ -2,26 +2,29 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
+  font-family: inherit;
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   line-height: 1.6;
-  color: #333;
+  color: #1f2937;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f5f5f5;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 30%),
+    linear-gradient(180deg, #eef4ff 0%, #f8f4ea 100%);
 }
 
 header {
   text-align: center;
   padding: 20px 0;
   margin-bottom: 30px;
-  background-color: #1a237e;
+  background: linear-gradient(135deg, #1a237e, #0f766e);
   color: white;
-  border-radius: 5px;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(26, 35, 126, 0.18);
 }
 
 header h1 {
@@ -42,10 +45,11 @@ main {
 }
 
 section {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.92);
   padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   width: 100%;
   max-width: 500px;
 }
@@ -59,19 +63,119 @@ section h3 {
 
 .activity-card {
   margin-bottom: 15px;
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+  padding: 18px;
+  border: 1px solid #d8e2f2;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.activity-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
 .activity-card h4 {
-  margin-bottom: 10px;
-  color: #0066cc;
+  margin-bottom: 0;
+  color: #0f172a;
 }
 
 .activity-card p {
   margin-bottom: 8px;
+}
+
+.spots-badge {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #075985;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.participants-section {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eff6ff, #f8fafc);
+  border: 1px solid #dbeafe;
+}
+
+.participants-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #1e3a8a;
+}
+
+.participants-count {
+  min-width: 32px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background-color: #1d4ed8;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.participants-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  color: #334155;
+}
+
+.participant-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.participant-row + .participant-row {
+  margin-top: 6px;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.participant-email {
+  overflow-wrap: anywhere;
+}
+
+.participant-delete-button {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dc2626, #f97316);
+  box-shadow: 0 8px 16px rgba(220, 38, 38, 0.22);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.participant-delete-button:hover {
+  box-shadow: 0 12px 20px rgba(220, 38, 38, 0.28);
+}
+
+.participant-delete-button span {
+  transform: translateY(-1px);
+}
+
+.participants-empty {
+  margin-bottom: 0;
+  color: #64748b;
+  font-style: italic;
 }
 
 .form-group {
@@ -94,18 +198,20 @@ section h3 {
 }
 
 button {
-  background-color: #1a237e;
+  background: linear-gradient(135deg, #1a237e, #0f766e);
   color: white;
   border: none;
   padding: 10px 15px;
   font-size: 16px;
-  border-radius: 5px;
+  border-radius: 999px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 10px 18px rgba(26, 35, 126, 0.2);
 }
 
 button:hover {
-  background-color: #3949ab;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 24px rgba(26, 35, 126, 0.26);
 }
 
 .message {
